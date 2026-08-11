@@ -21,22 +21,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             git zip unzip openjdk-17-jdk \
+            python3-pip python3-venv \
             autoconf automake libtool pkg-config \
-            zlib1g-dev
+            zlib1g-dev libncurses5-dev libtinfo5 \
+            cmake libffi-dev libssl-dev
 
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython==0.29.36
 
-      - name: Prepare Android SDK
+      - name: Initialize Buildozer Android environment
         run: |
-          mkdir -p "$HOME/.buildozer/android/platform"
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
-            "platform-tools" \
-            "platforms;android-33" \
-            "build-tools;33.0.2"
+          yes | buildozer android debug || true
+
+      - name: Install AIDL / Android Build Tools
+        run: |
+          SDK="$HOME/.buildozer/android/platform/android-sdk"
+          SDKMANAGER="$SDK/cmdline-tools/latest/bin/sdkmanager"
+
+          if [ ! -f "$SDKMANAGER" ]; then
+            SDKMANAGER="$SDK/tools/bin/sdkmanager"
+          fi
+
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" "build-tools;33.0.2" "platforms;android-33"
 
       - name: Build APK
         run: |
