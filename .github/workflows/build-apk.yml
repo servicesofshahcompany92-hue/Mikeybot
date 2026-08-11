@@ -16,12 +16,11 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install system packages
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             git zip unzip openjdk-17-jdk \
-            python3-pip python3-venv \
             autoconf automake libtool pkg-config \
             zlib1g-dev
 
@@ -30,10 +29,11 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython==0.29.36
 
-      - name: Install Android SDK tools
+      - name: Prepare Android SDK
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+          mkdir -p "$HOME/.buildozer/android/platform"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "platform-tools" \
             "platforms;android-33" \
             "build-tools;33.0.2"
