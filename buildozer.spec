@@ -1,4 +1,4 @@
-[app]
+we[app]
 title = MikeyBot
 package.name = mikeybot
 package.domain = org.mikeybot
@@ -16,6 +16,9 @@ fullscreen = 0
 android.api = 33
 android.minapi = 21
 android.archs = arm64-v8a
+
+p4a.branch = master
+p4a.setup_py = false
 
 [buildozer]
 log_level = 2
