@@ -16,13 +16,13 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             git zip unzip openjdk-17-jdk \
-            python3-pip autoconf automake libtool \
-            pkg-config zlib1g-dev libncurses5-dev \
+            autoconf automake libtool pkg-config \
+            zlib1g-dev libncurses5-dev \
             libtinfo5 cmake libffi-dev libssl-dev
 
       - name: Install Buildozer
@@ -30,17 +30,14 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython==0.29.36
 
-      - name: Build APK
-        env:
-          BUILDOZER_WARN_ON_ROOT: "0"
+      - name: Clean Buildozer environment
         run: |
-          buildozer -v android debug
+          rm -rf ~/.buildozer
+          rm -rf .buildozer
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: mikeybot-apk
-          path: bin/*.apk
+      - name: Build APK
+        run: |
+          yes | buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
